@@ -23,15 +23,6 @@ pragma solidity >=0.5.0 <=0.8.11;
 
 // Implement Bubble sorts (Do NOT rename the contract)
 contract Sorter {
-    // swaps array values at indices provided.
-    // array is passed by reference to reflect
-    // swaps in the original array
-    function swap(uint[] memory _data, uint a, uint b) private {
-        uint temp = _data[a];
-        _data[a] = _data[b];
-        _data[b] = temp;
-    }
-
     // 1. Implement Bubble sort iteratively (do NOT modify the type signature)
     function iterativeBubbleSort(uint[] memory _data) public pure returns (uint[] memory) {
         if (_data.length <= 1) {
@@ -44,7 +35,7 @@ contract Sorter {
             for (uint idx = 0; idx < lastIndex; idx++) {
                 if (_data[idx] > _data[idx+1]) {
                     isSorted = false;
-                    // calling swap makes this function impure since swap function is impure
+                    // swaps values
                     uint temp = _data[idx];
                     _data[idx] = _data[idx+1];
                     _data[idx+1] = temp;
@@ -58,23 +49,29 @@ contract Sorter {
     // 2. Implement Bubble sort recursively (do NOT modify the type signature)
     // Hint: What happens after 1 pass of bubble sort?
     function recursiveBubbleSort(uint[] memory _data, uint8 _size) public returns (uint[] memory) {
-        if (isBestCaseBubbleSort(_data, 0, _size-1)) {
-            return _data;
+        (bool isSortedAlready, uint[] memory potentiallySortedArray) = isBestCaseBubbleSort(_data, 0, _size-1);
+        if (isSortedAlready) {
+            return potentiallySortedArray;
         }
-        return recursiveBubbleSort(_data, _size-1);
+        return recursiveBubbleSort(potentiallySortedArray, _size-1);
     }
 
     // Checks whether given array starting from _idx and ending at _lastIdx is already sorted.
-    // If not sorted, it will put largest element in _lastIdx and move other large elements
-    // to right along the way.
-    function isBestCaseBubbleSort(uint[] memory _data, uint8 _idx, uint8 _lastIdx) private returns (bool) {
+    // If not sorted, it will perform one path of bubble sort.
+    // Returns whether passed data is sorted and one path bubble sorted array.
+    function isBestCaseBubbleSort(uint[] memory _data, uint8 _idx, uint8 _lastIdx) private returns (bool, uint[] memory) {
         if (_idx >= _lastIdx) {
-          return true;
+            return (true, _data);
         }
+        bool isFirstPairSorted = true;
         if (_data[_idx] > _data[_idx+1]) {
-          swap(_data, _idx, _idx+1);
-          return false;
+            isFirstPairSorted = false;
+            // swaps values
+            uint temp = _data[_idx];
+            _data[_idx] = _data[_idx+1];
+            _data[_idx+1] = temp;
         }
-        return isBestCaseBubbleSort(_data, _idx+1, _lastIdx);
+        (bool isRemainingSorted, uint[] memory onePathBubbleSortCompletedArray) = isBestCaseBubbleSort(_data, _idx+1, _lastIdx);
+        return (isFirstPairSorted && isRemainingSorted, onePathBubbleSortCompletedArray);
     }
 }
