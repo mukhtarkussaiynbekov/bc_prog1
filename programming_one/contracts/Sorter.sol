@@ -23,9 +23,35 @@ pragma solidity >=0.5.0 <=0.8.11;
 
 // Implement Bubble sorts (Do NOT rename the contract)
 contract Sorter {
+    // swaps array values at indices provided.
+    // array is passed by reference to reflect
+    // swaps in the original array
+    function swap(uint[] memory _data, uint a, uint b) private {
+        uint temp = _data[a];
+        _data[a] = _data[b];
+        _data[b] = temp;
+    }
+
     // 1. Implement Bubble sort iteratively (do NOT modify the type signature)
     function iterativeBubbleSort(uint[] memory _data) public pure returns (uint[] memory) {
-        // TODO Implement Here
+        if (_data.length <= 1) {
+            return _data;
+        }
+        uint lastIndex = _data.length - 1;
+        bool isSorted = false;
+        while (!isSorted) {
+            isSorted = true;
+            for (uint idx = 0; idx < lastIndex; idx++) {
+                if (_data[idx] > _data[idx+1]) {
+                    isSorted = false;
+                    // calling swap makes this function impure since swap function is impure
+                    uint temp = _data[idx];
+                    _data[idx] = _data[idx+1];
+                    _data[idx+1] = temp;
+                }
+            }
+            lastIndex--;
+        }
         return _data;
     }
 
