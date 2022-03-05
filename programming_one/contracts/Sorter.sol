@@ -58,7 +58,23 @@ contract Sorter {
     // 2. Implement Bubble sort recursively (do NOT modify the type signature)
     // Hint: What happens after 1 pass of bubble sort?
     function recursiveBubbleSort(uint[] memory _data, uint8 _size) public returns (uint[] memory) {
-        // TODO Implement Here
-        return _data;
+        if (isBestCaseBubbleSort(_data, 0, _size-1)) {
+            return _data;
+        }
+        return recursiveBubbleSort(_data, _size-1);
+    }
+
+    // Checks whether given array starting from _idx and ending at _lastIdx is already sorted.
+    // If not sorted, it will put largest element in _lastIdx and move other large elements
+    // to right along the way.
+    function isBestCaseBubbleSort(uint[] memory _data, uint8 _idx, uint8 _lastIdx) private returns (bool) {
+        if (_idx >= _lastIdx) {
+          return true;
+        }
+        if (_data[_idx] > _data[_idx+1]) {
+          swap(_data, _idx, _idx+1);
+          return false;
+        }
+        return isBestCaseBubbleSort(_data, _idx+1, _lastIdx);
     }
 }
